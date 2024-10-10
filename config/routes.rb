@@ -12,7 +12,7 @@ Rails.application.routes.draw do
       resources :users, only: [:create, :index]
       resources :sessions, only: :create
       resources :movies, only: [:index]
-      get 'movies/search', to: 'movies#search'
+      # get 'movies/search', to: 'movies#search'
     end
   end
 end
