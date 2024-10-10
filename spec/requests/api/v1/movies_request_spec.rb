@@ -7,7 +7,7 @@ RSpec.describe "Movies API", type: :request do
       json_response = File.read('spec/fixtures/top_rated_movies.json')
       
       stub_request(:get, "https://api.themoviedb.org/3/movie/top_rated")
-        .with(query: { api_key: ENV['MOVIE_DB_API_KEY'] })
+        .with(query: { api_key: Rails.application.credentials.movie_db[:api_key] })
         .to_return(status: 200, body: json_response)
 
       get '/api/v1/movies'
