@@ -12,15 +12,15 @@ RSpec.describe Movie, type: :model do
 
       movies = Movie.top_rated_movies
 
-      expect(movies.count).to eq(2)
+      expect(movies.count).to eq(20)
       
       expect(movies.first.id).to eq("278")
       expect(movies.first.title).to eq("The Shawshank Redemption")
       expect(movies.first.vote_average).to eq(8.707)
 
-      expect(movies.last.id).to eq("238")
-      expect(movies.last.title).to eq("The Godfather")
-      expect(movies.last.vote_average).to eq(8.691)
+      expect(movies.last.id).to eq("637")
+      expect(movies.last.title).to eq("Life Is Beautiful")
+      expect(movies.last.vote_average).to eq(8.448)
     end
   end
 end

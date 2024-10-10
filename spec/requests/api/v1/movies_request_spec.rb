@@ -17,6 +17,7 @@ RSpec.describe "Movies API", type: :request do
       movies = JSON.parse(response.body, symbolize_names: true)[:data]
 
       expect(movies.count).to eq(20)
+      expect(movies.first[:id]).to eq("278")
       expect(movies.first[:attributes][:title]).to eq("The Shawshank Redemption")
       expect(movies.first[:attributes][:vote_average]).to eq(8.707)
     end
