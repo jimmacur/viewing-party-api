@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "Api::V1::Movies", type: :request do
+RSpec.describe "Movies API", type: :request do
   describe "GET /api/v1/movies" do
     it 'returns top rated movies' do
       json_response = File.read('spec/fixtures/top_rated_movies.json')

@@ -1,6 +1,6 @@
 class Api::V1::MoviesController < ApplicationController
   def index
-    movies = Movie.top_rated
-    render json: MovieSerializer.new(movies)
+    top_rated_movies = Movie.top_rated_movies
+    render json: MovieSerializer.new(top_rated_movies), status: :ok
   end
 end
