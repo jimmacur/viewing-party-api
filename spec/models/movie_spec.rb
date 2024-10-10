@@ -3,20 +3,8 @@ require 'rails_helper'
 RSpec.describe Movie, type: :model do
   describe '.top_rated_movies' do
     it 'retrieves and parses the top-rated movies' do
-      json_response = {
-        results: [
-          {
-            id: 278,
-            title: "The Shawshank Redemption",
-            vote_average: 8.707
-          },
-          {
-            id: 238,
-            title: "The Godfather",
-            vote_average: 8.691
-          }
-        ]
-      }.to_json
+      
+      json_response = File.read('spec/fixtures/top_rated_movies.json')
 
       stub_request(:get, "https://api.themoviedb.org/3/movie/top_rated")
         .with(query: { api_key: ENV['MOVIE_DB_API_KEY'] })
