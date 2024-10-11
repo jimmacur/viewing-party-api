@@ -21,5 +21,22 @@ RSpec.describe "Movies API", type: :request do
       expect(movies.first[:attributes][:title]).to eq("The Shawshank Redemption")
       expect(movies.first[:attributes][:vote_average]).to eq(8.707)
     end
+
+    it 'returns search results when a query is provided' do
+      json_response = File.read('spec/fixtures/movie_search_results.json')
+
+      stub_request(:get, "https://api.themoviedb.org/3/search/movie")
+        .with(query: { api_key: Rails.application.credentials.movie_db[:api_key], query: 'Lord of the Rings' })
+        .to_return(status: 200, body: json_response)
+
+      get '/api/v1/movies', params: { query: 'Lord of the Rings' }
+
+      movies = JSON.parse(response.body, symbolize_names: true)[:data]
+
+      expect(movies.count).to eq(20)
+      expect(movies.first[:id]).to eq("122")
+      expect(movies.first[:attributes][:title]).to eq("The Lord of the Rings: The Return of the King")
+      expect(movies.first[:attributes][:vote_average]).to eq(8.5)
+    end
   end
 end
