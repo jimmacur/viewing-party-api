@@ -39,4 +39,54 @@ RSpec.describe "Movies API", type: :request do
       expect(movies.first[:attributes][:vote_average]).to eq(8.5)
     end
   end
+
+  describe "GET /api/v1/vovies/:id" do
+    it 'returns desired movie details when movie exists' do
+      movie_id = 122
+      json_response = File.read("spec/fixtures/lotr_full_response.json")
+
+      stub_request(:get, "https://api.themoviedb.org/3/movie/#{movie_id}")
+          .with(query: { api_key: Rails.application.credentials.movie_db[:api_key], append_to_response: 'credits,reviews' })
+          .to_return(status: 200, body: json_response)
+
+      get "/api/v1/movies/#{movie_id}"
+
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
+
+      parsed_response = JSON.parse(response.body, symbolize_names: true)
+
+      expect(parsed_response).to have_key(:data)
+      expect(parsed_response[:data]).to have_key(:attributes)
+
+      expect(parsed_response[:data][:attributes]).to have_key(:id)
+      expect(parsed_response[:data][:attributes]).to have_key(:title)
+      expect(parsed_response[:data][:attributes]).to have_key(:vote_average)
+      expect(parsed_response[:data][:attributes]).to have_key(:release_year)
+      expect(parsed_response[:data][:attributes]).to have_key(:runtime)
+      expect(parsed_response[:data][:attributes]).to have_key(:genres)
+      expect(parsed_response[:data][:attributes]).to have_key(:summary)
+      expect(parsed_response[:data][:attributes]).to have_key(:cast)
+      expect(parsed_response[:data][:attributes]).to have_key(:reviews)
+
+      expect(parsed_response[:data][:attributes][:id]).to eq(movie_id)
+      expect(parsed_response[:data][:attributes][:title]).to eq("The Lord of the Rings: The Return of the King") 
+      expect(parsed_response[:data][:attributes][:vote_average]).to eq(8.482)
+    end
+
+    it 'returns an error when the movie does not exist' do
+      movie_id = 99999
+      stub_request(:get, "https://api.themoviedb.org/3/movie/#{movie_id}")
+        .with(query: { api_key: Rails.application.credentials.movie_db[:api_key], append_to_response: 'credits,reviews' })
+        .to_return(status: 404)
+
+        get "/api/v1/movies/#{movie_id}"
+
+        expect(response.status).to eq(404)
+        parsed_response = JSON.parse(response.body, symbolize_names: true)
+
+        expect(parsed_response).to have_key(:error)  # Assuming your API returns an error key
+        expect(parsed_response[:error]).to eq("Movie not found")
+    end
+  end
 end

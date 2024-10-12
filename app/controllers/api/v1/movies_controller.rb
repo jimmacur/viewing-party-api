@@ -9,7 +9,12 @@ class Api::V1::MoviesController < ApplicationController
   end
 
   def show
-    movie = MovieService.new(params[:id]).call
-    render json: MovieDetailsSerializer.new(movie).serializable_hash
+    movie_data = MovieSearchGateway.new(params[:id]).call
+    if movie_data
+      movie_details = MovieDetails.new(movie_data)
+      render json: MovieDetailsSerializer.new(movie_details).serializable_hash
+    else
+      render json: { error: 'Movie not found' }, status: 404
+    end
   end
 end
