@@ -49,20 +49,7 @@ class MovieDetails
   end
   
   def genres_list
-    # puts "Genres: #{@genres.inspect}"
-    
-    # return '' if @genres.nil? || !@genres.is_a?(Array)
-    
-    @genres.map do |genre|
-      if genre.is_a?(Hash) && genre[:name]
-        genre[:name]
-      elsif genre.is_a?(String)
-        genre
-      else
-        puts "Unexpected genre format: #{genre.inspect}"
-        nil
-      end
-    end.compact.join(', ')
+    @genres.map { |genre| genre[:name] if genre.is_a?(Hash) }.compact.join(', ')
   end
 
   def summary
