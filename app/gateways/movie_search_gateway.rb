@@ -15,8 +15,8 @@ class MovieSearchGateway
       release_date: movie_data[:release_date],
       vote_average: movie_data[:vote_average],
       runtime: movie_data[:runtime],
-      genres: movie_data[:genres].map { |genre| genre[:name] }, # Assuming genres is an array of hashes
-      overview: movie_data[:overview], # This will be renamed to summary in MovieDetails
+      genres: movie_data[:genres].map { |genre| genre[:name] },
+      overview: movie_data[:overview], 
       credits: movie_data[:credits],
       reviews: movie_data[:reviews]
     }
