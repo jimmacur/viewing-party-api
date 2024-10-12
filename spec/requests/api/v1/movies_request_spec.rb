@@ -73,5 +73,20 @@ RSpec.describe "Movies API", type: :request do
       expect(parsed_response[:data][:attributes][:title]).to eq("The Lord of the Rings: The Return of the King") 
       expect(parsed_response[:data][:attributes][:vote_average]).to eq(8.482)
     end
+
+    it 'returns an error when the movie does not exist' do
+      movie_id = 99999
+      stub_request(:get, "https://api.themoviedb.org/3/movie/#{movie_id}")
+        .with(query: { api_key: Rails.application.credentials.movie_db[:api_key], append_to_response: 'credits,reviews' })
+        .to_return(status: 404)
+
+        get "/api/v1/movies/#{movie_id}"
+
+        expect(response.status).to eq(404)
+        parsed_response = JSON.parse(response.body, symbolize_names: true)
+
+        expect(parsed_response).to have_key(:error)  # Assuming your API returns an error key
+        expect(parsed_response[:error]).to eq("Movie not found")
+    end
   end
 end
