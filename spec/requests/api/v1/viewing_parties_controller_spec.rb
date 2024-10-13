@@ -47,4 +47,25 @@ RSpec.describe "Viewing Parties Controller" do
     expect(ViewingParty.count).to eq(0)
     expect(Invitation.count).to eq(0)
   end
+
+  it 'returns an error with missing required params' do
+    party_params = {
+      viewing_party: {
+        name: nil,
+        start_time: "2025-02-01 10:00:00",
+        end_time: "2025-02-01 14:30:00",
+        movie_id: 278,
+        movie_title: "The Shawshank Redemption"
+      },
+      api_key: @host.api_key,
+      invitees: []
+    }
+
+    post '/api/v1/viewing_parties', params: party_params
+
+    expect(response).to have_http_status(:unprocessable_entity)
+    expect(JSON.parse(response.body)).to eq({ 'error' => "Name can't be blank" })
+    expect(ViewingParty.count).to eq(0)
+    expect(Invitation.count).to eq(0)
+  end
 end
