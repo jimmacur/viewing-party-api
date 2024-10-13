@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "Movies API", type: :request do
+RSpec.describe "Movies API" do
   describe "GET /api/v1/movies" do
     it 'returns top rated movies' do
 

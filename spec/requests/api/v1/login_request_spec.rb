@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe "Sessions API", type: :request do
+describe "Sessions API" do
   describe "#create action (login)" do
     context "request is valid" do
       before(:each) do
