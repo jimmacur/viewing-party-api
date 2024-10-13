@@ -10,27 +10,18 @@ class ViewingPartyGateway
     viewing_party.host = @current_user
 
     if viewing_party.save
-      add_invitees(viewing_party)
+      add_invitees(viewing_party, @invitees)
       viewing_party
     else
       nil
     end
   end
 
-  def add_invitees(viewing_party, invitee_user_id)
-    invitee_user = User.find_by(id: invitee_user_id)
-    return nil unless invitee_user
-
-    Invitation.create(viewing_party: viewing_party, user: invitee_user)
-    viewing_party
-  end
-
-  private
-
-  def add_invitees(viewing_party)
-    @invitees.each do |invitee_id|
+  def add_invitees(viewing_party, invitee_user_ids)
+    Array(invitee_user_ids).each do |invitee_id|
       user = User.find_by(id: invitee_id)
       Invitation.create(viewing_party: viewing_party, user: user) if user
     end
+    viewing_party
   end
 end
