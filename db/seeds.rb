@@ -7,14 +7,14 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
-user1 = User.create!(name: "Danny DeVito", username: "danny_de_v", password: "jerseyMikesRox7")
-user2 = User.create!(name: "Dolly Parton", username: "dollyP", password: "Jolene123")
-user3 = User.create!(name: "Lionel Messi", username: "futbol_geek", password: "test123")
+danny = User.create!(name: "Danny DeVito", username: "danny_de_v", password: "jerseyMikesRox7")
+dolly = User.create!(name: "Dolly Parton", username: "dollyP", password: "Jolene123")
+lionel = User.create!(name: "Lionel Messi", username: "futbol_geek", password: "test123")
+barbara = User.create!(name: 'Barbara', username: 'leo_fan', password: 'LeoIsBest456!')
+ceci = User.create!(name: 'Ceci', username: 'titanic_forever', password: 'IceBerg789!')
+peyton = User.create!(name: 'Peyton', username: 'star_wars_geek_8', password: 'UseTheForce321!')
 
-juliet = User.create!(name: 'Juliet', username: 'juliet_bash', api_key: 'e1An2gAidDbWtJuhbHFKryjU')
-barbara = User.create!(name: 'Barbara', username: 'leo_fan')
-ceci = User.create!(name: 'Ceci', username: 'titanic_forever')
-peyton = User.create!(name: 'Peyton', username: 'star_wars_geek_8')
+juliet = User.create!(name: 'Juliet', username: 'juliet_bash', api_key: 'e1An2gAidDbWtJuhbHFKryjU', password: 'SecurePass123!')
 
 party = ViewingParty.create!(
   name: "Juliet's Bday Movie Bash!",
