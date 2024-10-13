@@ -31,15 +31,15 @@ class Api::V1::ViewingPartiesController < ApplicationController
     end
 
     if params[:invitee_user_id].present?
-      gateway = ViewingPartyGateway.new(@current_user, {}, params[:invitee_user_id])
+      gateway = ViewingPartyGateway.new(@current_user, {}, Array(params[:invitee_user_id]))
       
-      if gateway.add_invitees(viewing_party, params[:invitee_user_id])
-        render json: ViewingPartySerializer.new(viewing_party), status: :ok
+      if gateway.add_invitees(viewing_party, Array(params[:invitee_user_id]))
+          render json: ViewingPartySerializer.new(viewing_party), status: :ok
       else
-        render json: { error: "Invitee not found" }, status: :not_found
+          render json: { error: "Invitee not found" }, status: :not_found
       end
     else
-      render json: { error: "No invitee user ID provided" }, status: :unprocessable_entity
+        render json: { error: "No invitee user ID provided" }, status: :unprocessable_entity
     end
   end
 
