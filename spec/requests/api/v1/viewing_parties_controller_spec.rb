@@ -43,6 +43,7 @@ RSpec.describe "Viewing Parties Controller" do
     post '/api/v1/viewing_parties', params: party_params
 
     expect(response).to have_http_status(:unauthorized)
+    expect(JSON.parse(response.body)).to eq({ 'error' => 'Invalid API key' })
     expect(ViewingParty.count).to eq(0)
     expect(Invitation.count).to eq(0)
   end
