@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Users API", type: :request do
+RSpec.describe "Users API" do
   describe "Create User Endpoint" do
     let(:user_params) do
       {
