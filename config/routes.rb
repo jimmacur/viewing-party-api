@@ -16,7 +16,7 @@ Rails.application.routes.draw do
           get 'search'
         end
       end
-      resources :viewing_parties, only: [:create]
+      resources :viewing_parties, only: [:create, :update]
     end
   end
 end

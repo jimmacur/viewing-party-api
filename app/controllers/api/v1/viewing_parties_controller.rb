@@ -1,30 +1,45 @@
 class Api::V1::ViewingPartiesController < ApplicationController
-  before_action :authenticate_user, only: [:create]
+  before_action :authenticate_user, only: [:create, :update]
   
   def create
-    gateway = ViewingPartyGateway.new(@current_user, viewing_party_params, params[:invitees])
+    gateway = ViewingPartyGateway.new(@current_user, viewing_party_params)
+  
+    viewing_party = gateway.create_viewing_party
+  
+    if viewing_party
+      if params[:invitee_user_ids].present?
+        gateway.add_invitees(viewing_party, params[:invitee_user_ids])
+      end
+  
+      render json: ViewingPartySerializer.new(viewing_party), status: :created
+    else
+      render json: { error: viewing_party.errors.full_messages.to_sentence }, status: :unprocessable_entity
+    end
+  end
+
+  def update
+    viewing_party = ViewingParty.find(params[:id])
+
+    if viewing_party.nil?
+      render json: { error: "Viewing party not found" }, status: :not_found
+      return
+    end
+
+    if viewing_party.host != @current_user
+      render json: { error: "You are not authorized to invite users to this viewing party" }, status: :forbidden
+      return
+    end
 
     if params[:invitee_user_id].present?
-      viewing_party = ViewingParty.find(params[:id])
-
-      if viewing_party.host != @current_user
-        render json: { error: "You are not authorized to invite users to this viewing party" }, status: :forbidden
-        return
-      end
-
+      gateway = ViewingPartyGateway.new(@current_user, {}, params[:invitee_user_id])
+      
       if gateway.add_invitees(viewing_party, params[:invitee_user_id])
-        render json: ViewingPartySerializer.new(viewing_party)
+        render json: ViewingPartySerializer.new(viewing_party), status: :ok
       else
         render json: { error: "Invitee not found" }, status: :not_found
       end
     else
-      viewing_party = gateway.create_viewing_party
-
-      if viewing_party
-        render json: ViewingPartySerializer.new(viewing_party), status: :created
-      else
-        render json: { error: viewing_party.errors.full_messages.to_sentence }, status: :unprocessable_entity
-      end
+      render json: { error: "No invitee user ID provided" }, status: :unprocessable_entity
     end
   end
 
