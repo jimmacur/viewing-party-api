@@ -58,9 +58,41 @@ RSpec.describe MovieDetails, type: :poro do
       expect(review[:content]).to eq('very good movie 9.5/10')
       expect(review[:rating]).to eq(9.5)
     end
+  end
 
-    it 'does not return more than 5 reviews' do
-      expect(limited_reviews.size).to be <= 5
+  describe '#limited_cast' do
+    it 'returns up to 5 cast members' do
+      limited_cast = movie.limited_cast
+      expect(limited_cast.size).to be <= 5
+
+      limited_cast.each do |member|
+        expect(member).to have_key(:name)
+        expect(member).to have_key(:character)
+      end
+    end
+  end
+
+  describe '#release_year' do
+    it 'returns the release year' do
+      expect(movie.release_year).to eq(2003)
+    end
+  end
+
+  describe '#total_reviews' do
+    it 'returns the total number of reviews' do
+      expect(movie.total_reviews).to eq(7)
+    end
+  end
+
+  describe '#genres_list' do
+    it 'returns a list of genres' do
+      expect(movie.genres_list).to eq('Adventure, Fantasy, Action')
+    end
+  end
+
+  describe '#summary' do
+    it 'returns the movie summary' do
+      expect(movie.summary).to eq(movie_data[:overview])
     end
   end
 end
