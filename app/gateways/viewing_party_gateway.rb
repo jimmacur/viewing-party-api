@@ -21,14 +21,6 @@ class ViewingPartyGateway
     end
   end
 
-  def add_invitees(viewing_party, invitee_user_id)
-    invitee_user = User.find_by(id: invitee_user_id)
-    return nil unless invitee_user
-
-    Invitation.create(viewing_party: viewing_party, user: invitee_user)
-    viewing_party
-  end
-
   private
 
   def add_invitees(viewing_party)
