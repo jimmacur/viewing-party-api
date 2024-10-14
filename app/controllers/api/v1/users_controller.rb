@@ -1,5 +1,4 @@
 class Api::V1::UsersController < ApplicationController
-  before_action :validate_api_key, only: [:show]
 
   def create
     user = User.new(user_params)
@@ -15,12 +14,8 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def show
-    user = User.find(params[:id])
-    if user
-      render json: UserSerializer.new(user)
-    else
-      render json: { message: 'User not found', status: 404 }, status not_found
-    end
+    validate_api_key
+    render json: UserSerializer.new(@current_user)
   end
 
   private
@@ -30,9 +25,17 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def validate_api_key
-    user = User.find_by(api_key: params[:api_key])
-    if user.nil? || user.api_key != params[:api_key]
-      render json: { message: 'Unauthorized', status: 401 }, status: :unauthorized
+    api_key = params[:api_key]
+    @current_user = User.find_by(api_key: api_key)
+    
+    if @current_user.nil?
+      render json: { message: 'User not found', status: 401 }, status: :not_found
+      return
+    end
+  
+    unless @current_user.id.to_s == params[:id]
+      render json: { message: 'Unauthorized', status: 404 }, status: :unauthorized
+      return
     end
   end
 end

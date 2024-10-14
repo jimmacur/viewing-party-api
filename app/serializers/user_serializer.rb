@@ -2,8 +2,8 @@ class UserSerializer
   include JSONAPI::Serializer
   attributes :name, :username, :api_key
 
-  attribute :viewing_parties_hosted do |user|
-    user.viewing_parties_hosted.map do |party|
+  attribute :hosted_viewing_parties do |user|
+    user.hosted_viewing_parties.map do |party|
       {
         id: party.id,
         name: party.name,
@@ -16,8 +16,8 @@ class UserSerializer
     end
   end
 
-  attribute :viewing_parties_invited do |user|
-    user.viewing_parties_invited.map do |party|
+  attribute :invited_viewing_parties do |user|
+    user.invited_viewing_parties.map do |party|
       {
         name: party.name,
         start_time: party.start_time,

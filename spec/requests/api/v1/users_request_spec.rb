@@ -87,4 +87,41 @@ RSpec.describe "Users API" do
       expect(json[:data][0][:attributes]).to_not have_key(:api_key)
     end
   end
+
+  describe "Show User Endpoint" do
+    before :each do
+      @user = User.create!(name: "Leo", username: "leo_real_verified", password: "password")
+      expect(User.exists?(@user.id)).to be true
+    end
+  
+    it "returns the user data" do
+      get api_v1_user_path(@user), params: { api_key: @user.api_key }
+      expect(response).to have_http_status(:success)
+      json = JSON.parse(response.body, symbolize_names: true)
+      expect(json[:data][:type]).to eq("user")
+      expect(json[:data][:attributes][:name]).to eq(@user.name)
+      expect(json[:data][:attributes][:username]).to eq(@user.username)
+      expect(json[:data][:attributes]).to have_key(:api_key)
+    end
+
+    context "with wrong API key" do
+      it "returns unauthorized status" do
+        get api_v1_user_path(@user), params: { api_key: "wrong_api_key" }, as: :json
+        expect(response).to have_http_status(:unauthorized)
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json[:message]).to eq("Unauthorized")
+        expect(json[:status]).to eq(401)
+      end
+    end
+  
+    context "when user does not exist" do
+      it "returns user not found message" do
+        get api_v1_user_path(999), params: { api_key: @user.api_key }, as: :json
+        expect(response).to have_http_status(:not_found)
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json[:message]).to eq("User not found")
+        expect(json[:status]).to eq(404)
+      end
+    end
+  end
 end

@@ -11,12 +11,12 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :users, only: [:create, :index, :show]
       resources :sessions, only: :create
+      resources :viewing_parties, only: [:create]
       resources :movies, only: [:index, :show] do
         collection do
           get 'search'
         end
       end
-      resources :viewing_parties, only: [:create]
     end
   end
 end
