@@ -2,22 +2,22 @@ class Api::V1::MoviesController < ApplicationController
   def index
     if params[:query].present?
       query = params[:query]
-
-      if query.blank?
-        render json: { error: 'Query parameter is required' }, status: :unprocessable_entity and return
-      end
-
       movies = MovieDbGateway.new.movie_search(query)
 
-    if movies.empty?
-      render json: { message: 'No movies found' }, status: :ok
-    else
-      render json: MovieSerializer.new(movies).serializable_hash, status: :ok
-    end
+      if movies.empty?
+        render json: { message: 'No movies found' }, status: :ok
+      else
+        render json: MovieSerializer.new(movies).serializable_hash, status: :ok
+      end
 
     else
       movies = MovieDbGateway.new.top_rated_movies
-      render json: MovieSerializer.new(movies).serializable_hash, status: :ok
+      
+      if movies.empty?
+        render json: { message: 'No movies found' }, status: :ok
+      else
+        render json: MovieSerializer.new(movies).serializable_hash, status: :ok
+      end
     end
   end
 

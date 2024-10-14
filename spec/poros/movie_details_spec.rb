@@ -61,9 +61,9 @@ RSpec.describe MovieDetails, type: :poro do
   end
 
   describe '#limited_cast' do
-    it 'returns up to 5 cast members' do
+    it 'returns up to 10 cast members' do
       limited_cast = movie.limited_cast
-      expect(limited_cast.size).to be <= 5
+      expect(limited_cast.size).to be <= 10
 
       limited_cast.each do |member|
         expect(member).to have_key(:name)
