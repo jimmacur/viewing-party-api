@@ -106,8 +106,9 @@ RSpec.describe "Users API" do
 
     context "with wrong API key" do
       it "returns unauthorized status" do
-        get api_v1_user_path(@user), params: { api_key: "wrong_api_key" }, as: :json
+        get api_v1_user_path(@user), params: { api_key: "wrong_api_key" }
         expect(response).to have_http_status(:unauthorized)
+
         json = JSON.parse(response.body, symbolize_names: true)
         expect(json[:message]).to eq("Unauthorized")
         expect(json[:status]).to eq(401)
@@ -116,9 +117,11 @@ RSpec.describe "Users API" do
   
     context "when user does not exist" do
       it "returns user not found message" do
-        get api_v1_user_path(999), params: { api_key: @user.api_key }, as: :json
+        get api_v1_user_path(999), params: { api_key: @user.api_key }
         expect(response).to have_http_status(:not_found)
+
         json = JSON.parse(response.body, symbolize_names: true)
+
         expect(json[:message]).to eq("User not found")
         expect(json[:status]).to eq(404)
       end

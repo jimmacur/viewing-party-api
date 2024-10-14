@@ -2,10 +2,16 @@ class Api::V1::MoviesController < ApplicationController
   def index
     if params[:query].present?
       movies = MovieDbGateway.new.movie_search(params[:query])
+
+      if movies.empty?
+        render json: { message: 'No movies found' }, status: :ok
+      else
+        render json: MovieSerializer.new(movies).serializable_hash, status: :ok
+      end
     else
       movies = MovieDbGateway.new.top_rated_movies
+      render json: MovieSerializer.new(movies).serializable_hash, status: :ok
     end
-    render json: MovieSerializer.new(movies)
   end
 
   def show
