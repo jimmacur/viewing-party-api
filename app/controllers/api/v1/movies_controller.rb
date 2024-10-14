@@ -12,7 +12,12 @@ class Api::V1::MoviesController < ApplicationController
 
     else
       movies = MovieDbGateway.new.top_rated_movies
-      render json: MovieSerializer.new(movies).serializable_hash, status: :ok
+      
+      if movies.empty?
+        render json: { message: 'No movies found' }, status: :ok
+      else
+        render json: MovieSerializer.new(movies).serializable_hash, status: :ok
+      end
     end
   end
 

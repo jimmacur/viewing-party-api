@@ -21,6 +21,7 @@ class MovieDbGateway
   private
 
   def map_movies(movies_data)
+    return [] if movies_data.nil?
     mapped_movies = movies_data.map do |movie_data|
       Movie.new(
         id: movie_data[:id],

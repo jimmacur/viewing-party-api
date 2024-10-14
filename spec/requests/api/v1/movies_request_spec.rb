@@ -22,6 +22,21 @@ RSpec.describe "Movies API" do
       expect(movies.first[:attributes][:vote_average]).to eq(8.707)
     end
 
+    it 'returns a message when no movies are found' do
+      json_response = File.read('spec/fixtures/no_movies_found.json')
+
+      stub_request(:get, "https://api.themoviedb.org/3/movie/top_rated")
+        .with(query: { api_key: Rails.application.credentials.movie_db[:api_key] })
+        .to_return(status: 200, body: json_response)
+
+      get '/api/v1/movies'
+
+      expect(response).to have_http_status(:ok)
+      parsed_response = JSON.parse(response.body, symbolize_names: true)
+      expect(response).to be_successful
+      expect(parsed_response).to eq({ message: 'No movies found' })
+    end
+
     it 'returns search results when a query is provided' do
       json_response = File.read('spec/fixtures/movie_search_results.json')
 
