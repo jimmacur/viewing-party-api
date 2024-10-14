@@ -1,34 +1,45 @@
 class Api::V1::ViewingPartiesController < ApplicationController
-  before_action :authenticate_user, only: [:create]
-  
+  before_action :authenticate_user, only: [:create, :update]
+  before_action :set_viewing_party, only: [:update]
+
   def create
     gateway = ViewingPartyGateway.new(@current_user, viewing_party_params, params[:invitees])
 
-    if params[:invitee_user_id].present?
-      viewing_party = ViewingParty.find(params[:id])
+    result = gateway.create_viewing_party
 
-      if viewing_party.host != @current_user
-        render json: { error: "You are not authorized to invite users to this viewing party" }, status: :forbidden
-        return  
-      end
-
-      if gateway.add_invitees(viewing_party, params[:invitee_user_id])
-        render json: ViewingPartySerializer.new(viewing_party)
-      else
-        render json: { error: "Invitee not found" }, status: :not_found
-      end
+    if result.is_a?(ViewingParty)
+      render json: ViewingPartySerializer.new(result), status: :created
     else
-      result = gateway.create_viewing_party
-    
-      if result.is_a?(ViewingParty)
-        render json: ViewingPartySerializer.new(result), status: :created
-      else
-        render json: { error: gateway.errors.join(", ") }, status: :unprocessable_entity
-      end
+      render json: { error: gateway.errors.join(", ") }, status: :unprocessable_entity
     end
   end
 
+  def update
+    if @viewing_party.host != @current_user
+      render json: { error: "You are not the host of this viewing party" }, status: :unauthorized
+      return
+    end
+
+    invitees = params[:invitees] || []
+
+    invitees.each do |invitee_id|
+      user = User.find_by(id: invitee_id)
+      if user.nil?
+        render json: { error: "User with id #{invitee_id} not found" }, status: :not_found
+        return
+      end
+
+      Invitation.create(viewing_party: @viewing_party, user: user)
+    end
+
+    render json: ViewingPartySerializer.new(@viewing_party)
+  end
+
   private
+
+  def set_viewing_party
+    @viewing_party = ViewingParty.find(params[:id])
+  end
 
   def viewing_party_params
     params.require(:viewing_party).permit(:name, :start_time, :end_time, :movie_id, :movie_title)
