@@ -20,7 +20,6 @@ class Api::V1::ViewingPartiesController < ApplicationController
     else
       result = gateway.create_viewing_party
     
-
       if result.is_a?(ViewingParty)
         render json: ViewingPartySerializer.new(result), status: :created
       else

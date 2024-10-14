@@ -21,8 +21,6 @@ class ViewingPartyGateway
     end
   end
 
-  private
-
   def add_invitees(viewing_party)
     @invitees.each do |invitee_id|
       user = User.find_by(id: invitee_id)

@@ -1,6 +1,4 @@
 class MovieDbGateway
-  MAX_RESULTS = 20
-
   def top_rated_movies
     response = Faraday.get("https://api.themoviedb.org/3/movie/top_rated", { 
       api_key: Rails.application.credentials.movie_db[:api_key] 
@@ -35,6 +33,6 @@ class MovieDbGateway
   end
 
   def limit_results(movies)
-    movies.take(MAX_RESULTS)
+    movies.take(20)
   end
 end 
