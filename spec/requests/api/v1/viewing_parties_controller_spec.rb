@@ -64,7 +64,7 @@ RSpec.describe "Viewing Parties Controller" do
     post '/api/v1/viewing_parties', params: party_params
 
     expect(response).to have_http_status(:unprocessable_entity)
-    expect(JSON.parse(response.body)).to eq({ 'error' => "Name can't be blank" })
+    expect(JSON.parse(response.body)).to eq({ 'error' => "Failed to create viewing party. Please check your input." })
     expect(ViewingParty.count).to eq(0)
     expect(Invitation.count).to eq(0)
   end

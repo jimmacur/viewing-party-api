@@ -2,20 +2,29 @@ class Api::V1::ViewingPartiesController < ApplicationController
   before_action :authenticate_user, only: [:create]
   
   def create
-    viewing_party = ViewingParty.new(viewing_party_params.except(:api_key))
-    viewing_party.host = @current_user
+    gateway = ViewingPartyGateway.new(@current_user, viewing_party_params, params[:invitees])
 
-    if viewing_party.save
-      params[:invitees].each do |invitee_id|
-        user = User.find_by(id: invitee_id)
-        if user
-          Invitation.create(viewing_party: viewing_party, user: user)
-        end
+    if params[:invitee_user_id].present?
+      viewing_party = ViewingParty.find(params[:id])
+
+      if viewing_party.host != @current_user
+        render json: { error: "You are not authorized to invite users to this viewing party" }, status: :forbidden
+        return  
       end
 
-      render json: ViewingPartySerializer.new(viewing_party), status: :created
+      if gateway.add_invitees(viewing_party, params[:invitee_user_id])
+        render json: ViewingPartySerializer.new(viewing_party)
+      else
+        render json: { error: "Invitee not found" }, status: :not_found
+      end
     else
-      render json: { error: viewing_party.errors.full_messages.to_sentence }, status: :unprocessable_entity
+      result = gateway.create_viewing_party
+
+      if result
+        render json: ViewingPartySerializer.new(result), status: :created
+      else
+        render json: { error: result.errors.join(", ") }, status: :unprocessable_entity
+      end
     end
   end
 
