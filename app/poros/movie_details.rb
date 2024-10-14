@@ -32,7 +32,7 @@ class MovieDetails
   end
 
   def limited_cast
-    credits[:cast].take(5).map do |member|
+    credits[:cast].take(10).map do |member|
       {
         name: member[:name],
         character: member[:character]
