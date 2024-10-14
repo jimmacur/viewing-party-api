@@ -19,11 +19,12 @@ class Api::V1::ViewingPartiesController < ApplicationController
       end
     else
       result = gateway.create_viewing_party
+    
 
-      if result
+      if result.is_a?(ViewingParty)
         render json: ViewingPartySerializer.new(result), status: :created
       else
-        render json: { error: result.errors.join(", ") }, status: :unprocessable_entity
+        render json: { error: gateway.errors.join(", ") }, status: :unprocessable_entity
       end
     end
   end

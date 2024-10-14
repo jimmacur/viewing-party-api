@@ -1,18 +1,25 @@
 class ViewingPartyGateway
+  attr_reader :errors
+
   def initialize(current_user, viewing_party_params, invitees = [])
     @current_user = current_user
     @viewing_party_params = viewing_party_params
     @invitees = invitees
+    @errors = []
   end
 
   def create_viewing_party
     viewing_party = ViewingParty.new(@viewing_party_params.except(:api_key))
     viewing_party.host = @current_user
 
+    puts "Attempting to save viewing party: #{viewing_party.inspect}"
     if viewing_party.save
+      puts "Viewing party saved successfully"
       add_invitees(viewing_party)
       viewing_party
     else
+      puts "Failed to save viewing party. Errors: #"
+      @errors = viewing_party.errors.full_messages
       nil
     end
   end
